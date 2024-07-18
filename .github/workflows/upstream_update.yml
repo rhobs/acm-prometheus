@@ -84,6 +84,7 @@ jobs:
             go mod tidy
             go mod vendor
             ${{ inputs.assets-cmd }}
+            test
             ```
           author: 'github-actions[bot]<github-actions[bot]@users.noreply.github.com>'
           committer: 'github-actions[bot]<github-actions[bot]@users.noreply.github.com>'
