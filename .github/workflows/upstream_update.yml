@@ -12,30 +12,32 @@ on:
     - '.github/workflows/upstream_updates.yaml'
     branches:
       - automated-updates-acm-2.12
-  inputs:
-    upstream: prometheus/prometheus
-    downstream: stolostron/prometheus
-    downstream-branch: release-2.12
-    restore-upstream: >-
-      CHANGELOG.md
-      VERSION
-      go.mod
-      go.sum
-      .golangci.yml
-    assets-cmd: |
-      # Only compress assets if assets actually changed
-      # The git diff relies on gits remote naming. The merge-flow checks out
-      # $downstream as origin at the time of writing this code.
-      if ! git diff --exit-code origin/master web/ui; then
-        make assets-compress
-        find web/ui/static -type f -name '*.gz' -exec git add {} \;
-        git add web/ui/embed.go
-        git diff --cached --exit-code || git commit -s -m "[bot] assets: generate"
-      fi
-  secrets:
-    pr-app-id: ${{ secrets.ACM_APP_ID }}
-    pr-app-private-key: ${{ secrets.ACM_APP_PRIVATE_KEY }}
-    slack-webhook-url: ${{ secrets.ACM_SLACK_WEBHOOK_URL }}
+
+inputs:
+  upstream: prometheus/prometheus
+  downstream: stolostron/prometheus
+  downstream-branch: release-2.12
+  restore-upstream: >-
+    CHANGELOG.md
+    VERSION
+    go.mod
+    go.sum
+    .golangci.yml
+  assets-cmd: |
+    # Only compress assets if assets actually changed
+    # The git diff relies on gits remote naming. The merge-flow checks out
+    # $downstream as origin at the time of writing this code.
+    if ! git diff --exit-code origin/master web/ui; then
+      make assets-compress
+      find web/ui/static -type f -name '*.gz' -exec git add {} \;
+      git add web/ui/embed.go
+      git diff --cached --exit-code || git commit -s -m "[bot] assets: generate"
+    fi
+secrets:
+  pr-app-id: ${{ secrets.ACM_APP_ID }}
+  pr-app-private-key: ${{ secrets.ACM_APP_PRIVATE_KEY }}
+  slack-webhook-url: ${{ secrets.ACM_SLACK_WEBHOOK_URL }}
+
 jobs:
   merge:
     runs-on: ubuntu-latest
